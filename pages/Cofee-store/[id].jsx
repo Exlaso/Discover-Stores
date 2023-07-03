@@ -45,7 +45,7 @@ const ID = (InitialProps) => {
   
   const router = useRouter();
   if (router.isFallback) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; 
   }
   const id = router.query.id;
   const {state: { coffeeStores }} = useContext(StoreContext);
