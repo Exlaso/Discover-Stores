@@ -4,29 +4,33 @@ import CardContainer from "@/Components/CardContainer";
 import FetchCoffeeStores from "@/Library/Coffee-stores";
 
 import UseTrackLocation from "../Hooks/UseTrackLocation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ACTION_TYPES, StoreContext } from "./_app";
 
 export const getStaticProps = async () => {
   const CofeeStore = await FetchCoffeeStores();
   return { props: { CofeeStore } };
 };
 export default function Home(props) {
-  const { latLong, handleTrackLocation, locationErrorMsg, Isloading } =
-    UseTrackLocation();
-    const [NearbyStoresData, setNearbyStoresData] = useState([])
 
+
+  const {  handleTrackLocation, locationErrorMsg, Isloading } =
+    UseTrackLocation();
+    const { dispatch,state } = useContext(StoreContext);
   const handleonclickbutton = (e) => {
     handleTrackLocation();
-
   };
   useEffect(() => {
     async function setCoffeeStoresByLocation() {
-      if (latLong) {
+      if (state.latLong) {
         try {
-          console.log(latLong);
-          const FetchedCoffeeStores = await FetchCoffeeStores(latLong,40);
+          console.log(state.latLong);
+          const FetchedCoffeeStores = await FetchCoffeeStores(state.latLong, 40);
           console.log(FetchedCoffeeStores);
-          setNearbyStoresData(FetchedCoffeeStores)
+          dispatch({
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: { coffeeStores :FetchedCoffeeStores}
+          })
         } catch (err) {
           console.log(err);
         }
@@ -34,7 +38,7 @@ export default function Home(props) {
     }
 
     setCoffeeStoresByLocation();
-  }, [latLong]);
+  }, [state.latLong]);
 
   return (
     <main>
@@ -49,7 +53,7 @@ export default function Home(props) {
       <span>{locationErrorMsg}</span>
       <CardContainer
         heading="Nearby Stores"
-        data={NearbyStoresData}
+        data={state.coffeeStores}
       ></CardContainer>
       <CardContainer
         heading="Ahmedabad"

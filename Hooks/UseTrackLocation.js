@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { ACTION_TYPES,StoreContext } from "@/pages/_app";
+import { ACTION_TYPES, StoreContext } from "@/pages/_app";
 
 const useTrackLocation = () => {
   const { dispatch } = useContext(StoreContext);

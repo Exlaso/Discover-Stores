@@ -19,6 +19,7 @@ const CardContainer = (props) => {
             <Card
               name={store.name}
               ImgUrl={store.ImgUrl}
+              BigImgUrl={store.BigImgUrl}
               href={`/Cofee-store/${store.id }`}
               key={store.id }
             ></Card>
