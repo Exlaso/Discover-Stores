@@ -1,0 +1,33 @@
+[
+  {
+    "id": 0,
+    "name": "StrangeLove Coffee",
+    "imgUrl": "/static/Cofee1.png",
+    "address": "983 Queen St E, Toronto, ON M4M 1K2",
+    "neighbourhood": "at King and Spadina"
+  },
+  {
+    "id": 1,
+    "name": "Dark Horse Coffee",
+    "imgUrl": "/static/Cofee2.png",
+    "websiteUrl": "https://www.darkhorseespresso.com/",
+    "address": "401 Richmond St W",
+    "neighbourhood": "Richmond and Spadina"
+  },
+  {
+    "id": 2,
+    "name": "Joldal Dukaan",
+    "imgUrl": "/static/Cofee3.png",
+    "websiteUrl": "https://exlaso.rf.gd",
+    "address": "401 Richmond St W",
+    "neighbourhood": "Route 300 Neighbourhood"
+  },
+  {
+    "id": 3,
+    "name": "Na hoy avi Dukaan to",
+    "imgUrl": "/static/Cofee4.png",
+    "websiteUrl": "https://taskvn.in",
+    "address": "401 Richmond St W",
+    "neighbourhood": "Route 300 Neighbourhood"
+  }
+]
