@@ -24,9 +24,7 @@ export default function Home(props) {
     async function setCoffeeStoresByLocation() {
       if (state.latLong) {
         try {
-          console.log(state.latLong);
           const FetchedCoffeeStores = await FetchCoffeeStores(state.latLong, 40);
-          console.log(FetchedCoffeeStores);
           dispatch({
             type: ACTION_TYPES.SET_COFFEE_STORES,
             payload: { coffeeStores :FetchedCoffeeStores}

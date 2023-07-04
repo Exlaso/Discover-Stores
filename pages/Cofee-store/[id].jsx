@@ -47,7 +47,6 @@ const ID = (InitialProps) => {
     state: { coffeeStores },
   } = useContext(StoreContext);
 
-  console.log(isEmpty(InitialProps.CofeeStore));
   useEffect(() => {
     if (isEmpty(InitialProps.CofeeStore)) {
       if (coffeeStores.length > 0) {
