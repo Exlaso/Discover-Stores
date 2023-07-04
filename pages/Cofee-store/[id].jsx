@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import FetchCoffeeStores from "@/Library/Coffee-stores";
-import { StoreContext } from "../_app";
 import { isEmpty } from "@/utils";
+import { StoreContext } from "@/store/store-context";
 
 export async function getStaticPaths() {
   const CofeeStore = await FetchCoffeeStores();
@@ -30,37 +30,35 @@ export async function getStaticProps(staticprops) {
   });
   return {
     props: {
-      CofeeStore: findcoffeestorebyid
-        ? findcoffeestorebyid
-        : {
-            name: "Not Found",
-            ImgUrl: "/static/404.png",
-          },
+      CofeeStore: findcoffeestorebyid ? findcoffeestorebyid : {},
     },
   };
 }
 const ID = (InitialProps) => {
-  const [StarRated, setStarRated] = useState(0);
-  const [coffeeStore, setCoffeeStore] = useState(InitialProps.CofeeStore)
-  
   const router = useRouter();
-  if (router.isFallback) {
-    return <div>Loading...</div>; 
-  }
   const id = router.query.id;
-  const {state: { coffeeStores }} = useContext(StoreContext);
+  const [StarRated, setStarRated] = useState(0);
+  const [coffeeStore, setCoffeeStore] = useState(InitialProps.CofeeStore);
 
-  useEffect(()=>{
-if (isEmpty(InitialProps.CofeeStore)) {
-  if(coffeeStores > 0){
-    const findcoffeestorebyid = coffeeStores.find((cs) => {
-      return cs.id === id;
-    });
-    setCoffeeStore(findcoffeestorebyid)
+  if (router.isFallback) {
+    return <div>Loading...</div>
   }
-}
-  },[id])
-  const {name,ImgUrl,address} = coffeeStore;
+  const {
+    state: { coffeeStores },
+  } = useContext(StoreContext);
+
+  console.log(isEmpty(InitialProps.CofeeStore));
+  useEffect(() => {
+    if (isEmpty(InitialProps.CofeeStore)) {
+      if (coffeeStores.length > 0) {
+        const findcoffeestorebyid = coffeeStores.find((cs) => {
+          return cs.id.toString() === id;
+        });
+        setCoffeeStore(findcoffeestorebyid);
+      }
+    }
+  }, [id]);
+  const { name, ImgUrl, address } = coffeeStore;
   return (
     <div>
       <Head>
@@ -90,7 +88,7 @@ if (isEmpty(InitialProps.CofeeStore)) {
               <p className="inline-block text-xl">{address}</p>
             </span>
             <span className="block ">
-              <h2 className="my-6 text-xl">{StarRated}&#9733;</h2>
+              <h2 className="my-6 text-xl">{StarRated}   &#9733;</h2>
               <button
                 onClick={() => {
                   setStarRated(StarRated + 1);
@@ -105,7 +103,7 @@ if (isEmpty(InitialProps.CofeeStore)) {
         ) : null}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ID;
+export default ID
