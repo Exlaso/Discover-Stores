@@ -36,7 +36,7 @@ const FetchCoffeeStores = async (
       id: res.fsq_id,
       address: res.location.formatted_address,
       ImgUrl: photos.length > 0 ? photos[0] : "/static/NotFound.png",
-    };
+       };
   });
 
   return await Promise.all(StoreData);

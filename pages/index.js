@@ -12,11 +12,10 @@ export const getStaticProps = async () => {
   return { props: { CofeeStore } };
 };
 export default function Home(props) {
-
-
-  const {  handleTrackLocation, locationErrorMsg, Isloading } =
+  const [err, setErr] = useState("")
+  const { handleTrackLocation, locationErrorMsg, Isloading } =
     UseTrackLocation();
-    const { dispatch,state } = useContext(StoreContext);
+  const { dispatch, state } = useContext(StoreContext);
   const handleonclickbutton = (e) => {
     handleTrackLocation();
   };
@@ -24,13 +23,18 @@ export default function Home(props) {
     async function setCoffeeStoresByLocation() {
       if (state.latLong) {
         try {
-          const FetchedCoffeeStores = await FetchCoffeeStores(state.latLong, 40);
+          const Response = await fetch(
+            `/api/coffee/GetCoffeeStoresByLocation?latLong=${state.latLong}&limit=30`
+            );
+            const coffeeStores = await Response.json();
           dispatch({
             type: ACTION_TYPES.SET_COFFEE_STORES,
-            payload: { coffeeStores :FetchedCoffeeStores}
-          })
+            payload: { coffeeStores },
+          });
+          setErr("")
         } catch (err) {
           console.log(err);
+          setErr(err.message)
         }
       }
     }
@@ -41,12 +45,13 @@ export default function Home(props) {
   return (
     <main>
       <Head>
-        <title>Coffee no Gallo</title>
+        <title>Galao</title>
       </Head>
 
       <Banner
         onclick={handleonclickbutton}
         Isloading={Isloading}
+        error={err}
       />
       <span>{locationErrorMsg}</span>
       <CardContainer

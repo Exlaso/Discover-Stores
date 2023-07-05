@@ -2,12 +2,12 @@ import Image from "next/image";
 
 import React from "react";
 
-const Banner = ({onclick,Isloading}) => {
+const Banner = ({onclick,Isloading,error}) => {
 
   return (
     <div className="flex flex-col items-start justify-start gap-11">
       <h1 className="text-5xl font-bold">
-        Coffee <span className="text-blue-900">Connoisseur</span>
+        Store <span className="text-blue-900">Connoisseur</span>
       </h1>
       <div className="grid gap-4">
         <p className="text-2xl text-white ">Mafat ma Gallo Sodhi aapu</p>
@@ -17,6 +17,7 @@ const Banner = ({onclick,Isloading}) => {
         >
           {Isloading?"Locating...":"Search Store"}
         </button>
+        <p>{error}</p>
       </div>
       <div className="absolute inset-0 -z-10 w-full ">
         <Image

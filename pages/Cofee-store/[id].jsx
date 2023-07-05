@@ -36,25 +36,51 @@ export async function getStaticProps(staticprops) {
 }
 const ID = (InitialProps) => {
   const router = useRouter();
-  const id = router.query.id;
-  const [StarRated, setStarRated] = useState(0);
-  const [coffeeStore, setCoffeeStore] = useState(InitialProps.CofeeStore);
-
+  
+  
   if (router.isFallback) {
     return <div>Loading...</div>
   }
+  
+  const id = router.query.id;
+  const [coffeeStore, setCoffeeStore] = useState(InitialProps.CofeeStore);
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
+  console.log("context stores", coffeeStores);
 
+  const HandleCreateStore = async (store) => {
+    try {
+      const { id, name, address, ImgUrl } = store;
+      const Response = await fetch("/api/CreateStores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, name, address, ImgUrl, voting: 0 }),
+      });
+      const Store = await Response.json();
+      setCoffeeStore(...Store)
+    } catch (error) {
+      console.error("HandleCreateStore", error);
+    }
+  };
   useEffect(() => {
+    console.log("effect running");
     if (isEmpty(InitialProps.CofeeStore)) {
       if (coffeeStores.length > 0) {
-        const findcoffeestorebyid = coffeeStores.find((cs) => {
+        const CoffeeStoresFromContext = coffeeStores.find((cs) => {
           return cs.id.toString() === id;
         });
-        setCoffeeStore(findcoffeestorebyid);
+        if (CoffeeStoresFromContext) {
+        HandleCreateStore(CoffeeStoresFromContext);
+        setCoffeeStore(CoffeeStoresFromContext);
+        }
+      } else {
+        
+        HandleCreateStore({ id });
+        
       }
+    } else {
+      HandleCreateStore(InitialProps.CofeeStore);
     }
   }, [id]);
   const { name, ImgUrl, address } = coffeeStore;
@@ -73,8 +99,8 @@ const ID = (InitialProps) => {
       <h2 className="py-3 text-3xl font-semibold ">{name}</h2>
       <div className="grid gap-4 lg:grid-cols-2">
         <Image
-          className="shadow-sm shadow-black"
-          src={ImgUrl}
+        src={ImgUrl}
+          className="shadow-sm shadow-black" 
           alt={name}
           width={800}
           height={500}
@@ -87,11 +113,8 @@ const ID = (InitialProps) => {
               <p className="inline-block text-xl">{address}</p>
             </span>
             <span className="block ">
-              <h2 className="my-6 text-xl">{StarRated}   &#9733;</h2>
-              <button
-                onClick={() => {
-                  setStarRated(StarRated + 1);
-                }}
+              <h2 className="my-6 text-xl">{0} &#9733;</h2>
+              <button 
                 className="block w-max rounded-md border-2 border-white bg-slate-600 p-3 pl-10 pr-10 text-white"
                 href={"/"}
               >
@@ -101,8 +124,9 @@ const ID = (InitialProps) => {
           </div>
         ) : null}
       </div>
-    </div>
-  )
-}
+      
+    </div> 
+  );
+};
 
-export default ID
+export default ID;
