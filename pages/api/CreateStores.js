@@ -7,9 +7,9 @@ const CreateStores = async (req, res) => {
       if (id) {
         const Record = await FindRecordByFilter(id)
 
-        if (Record.length !== 0) {
-          res.json(MinifyRecords(Record));
-          res.end();
+        if (Record.length !== 0) { 
+          res.json(Record);
+          res.end(); 
         } else {
           if (name) {
             const CreateRecord = await table.create([

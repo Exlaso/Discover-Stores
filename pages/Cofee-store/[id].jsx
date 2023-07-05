@@ -4,8 +4,9 @@ import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import FetchCoffeeStores from "@/Library/Coffee-stores";
-import { isEmpty } from "@/utils";
+import { fetcher, isEmpty } from "@/utils";
 import { StoreContext } from "@/store/store-context";
+import useSWR from 'swr'
 
 export async function getStaticPaths() {
   const CofeeStore = await FetchCoffeeStores();
@@ -45,6 +46,9 @@ const ID = (InitialProps) => {
   const id = router.query.id;
   const [coffeeStore, setCoffeeStore] = useState(InitialProps.CofeeStore);
   const [Votes, setVotes] = useState(0)
+
+  
+
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
@@ -58,7 +62,7 @@ const ID = (InitialProps) => {
         body: JSON.stringify({ id, name, address, ImgUrl, voting: 0 }),
       });
       const Store = await Response.json();
-      console.log(...Store);
+      console.log("Data From Airtable",...Store);
     } catch (error) {
       console.error("HandleCreateStore", error);
     }
@@ -77,8 +81,28 @@ const ID = (InitialProps) => {
     } else {
       HandleCreateStore(InitialProps.CofeeStore);
     }
-  }, [id]);
+  }, [id,InitialProps.coffeeStore]);
   const { name, ImgUrl, address } = coffeeStore;
+
+  
+  const { data, error, isLoading } = useSWR(`/api/GetStoresById?id=${id}`,fetcher)
+
+  
+  useEffect(()=>{
+    
+    if (data && data.length > 0) {
+      console.log("Data from SWR",data[0]);
+
+      setCoffeeStore(data[0])
+      setVotes(data[0].voting)
+    }
+  },[data])
+  if (error) return <div>failed to load</div>
+  if (isLoading) return <div>Loading...</div>
+
+
+
+  
   return (
     <div>
       <Head>

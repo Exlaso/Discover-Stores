@@ -8,7 +8,9 @@ const base = Airtable.base(process.env.AIRTABLE_BASE_KEY);
 export const table = base("Coffee Stores");
 
 const MinifyRecord = (Record) => {
-  return { ...Record.fields };
+  return { 
+    recordId: Record.id,
+    ...Record.fields };
 };
 export const MinifyRecords = (Records) => {
   return Records.map((record) => MinifyRecord(record));
