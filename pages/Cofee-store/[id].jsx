@@ -6,7 +6,7 @@ import Image from "next/image";
 import FetchCoffeeStores from "@/Library/Coffee-stores";
 import { fetcher, isEmpty } from "@/utils";
 import { StoreContext } from "@/store/store-context";
-import useSWR from 'swr'
+import useSWR from "swr";
 
 export async function getStaticPaths() {
   const CofeeStore = await FetchCoffeeStores();
@@ -14,7 +14,7 @@ export async function getStaticPaths() {
     return {
       params: {
         id: cs.id.toString(),
-      },
+      }, 
     };
   });
   return {
@@ -37,17 +37,16 @@ export async function getStaticProps(staticprops) {
 }
 const ID = (InitialProps) => {
   const router = useRouter();
-  
-  
+
   if (router.isFallback) {
-    return <div>Loading...</div>
+    return <div className="w-screen absolute inset-0 h-screen flex justify-center items-center ">Loading...</div>;
   }
-  
+
   const id = router.query.id;
   const [coffeeStore, setCoffeeStore] = useState(InitialProps.CofeeStore);
-  const [Votes, setVotes] = useState(0)
-
-  
+  const [Votes, setVotes] = useState(0);
+  const [IsBtnDisabled, setIsBtnDisabled] = useState(false);
+  const [BtnValue, setBtnValue] = useState("Upvote");
 
   const {
     state: { coffeeStores },
@@ -62,7 +61,6 @@ const ID = (InitialProps) => {
         body: JSON.stringify({ id, name, address, ImgUrl, voting: 0 }),
       });
       const Store = await Response.json();
-      console.log("Data From Airtable",...Store);
     } catch (error) {
       console.error("HandleCreateStore", error);
     }
@@ -74,35 +72,54 @@ const ID = (InitialProps) => {
           return cs.id.toString() === id;
         });
         if (CoffeeStoresFromContext) {
-        HandleCreateStore(CoffeeStoresFromContext);
-        setCoffeeStore(CoffeeStoresFromContext);
+          HandleCreateStore(CoffeeStoresFromContext);
+          setCoffeeStore(CoffeeStoresFromContext);
         }
       }
     } else {
       HandleCreateStore(InitialProps.CofeeStore);
     }
-  }, [id,InitialProps.coffeeStore]);
+  }, [id, InitialProps.coffeeStore]);
   const { name, ImgUrl, address } = coffeeStore;
 
-  
-  const { data, error, isLoading } = useSWR(`/api/GetStoresById?id=${id}`,fetcher)
+  const { data, error, isLoading } = useSWR(
+    `/api/GetStoresById?id=${id}`,
+    fetcher
+  );
 
-  
-  useEffect(()=>{
-    
-    if (data && data.length > 0) {
-      console.log("Data from SWR",data[0]);
-
-      setCoffeeStore(data[0])
-      setVotes(data[0].voting)
+  const HandleUpvoteButton = async () => {
+    setIsBtnDisabled(true);
+    setBtnValue("Upvoting...");
+    try {
+      const Response = await fetch("/api/UpvoteStores", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const Store = await Response.json();
+      if (Store && Store.length > 0) {
+        setBtnValue("Upvote");
+    setIsBtnDisabled(false);
+    setVotes(Votes + 1);
+      }
+    } catch (error) {            
+      console.error("HandleCreateStore", error);
     }
-  },[data])
-  if (error) return <div>failed to load</div>
-  if (isLoading) return <div>Loading...</div>
 
 
+  };
 
-  
+  useEffect(() => {
+    if (data && data.length > 0) {
+
+      setCoffeeStore(data[0]);
+      setVotes(data[0].voting);
+    }
+  }, [data]);
+  if (error) return <div>failed to load</div>;
+  if (isLoading) return <div className="w-screen absolute inset-0 h-screen flex justify-center items-center ">Loading...</div>;
+;
+
   return (
     <div>
       <Head>
@@ -118,9 +135,9 @@ const ID = (InitialProps) => {
       <h2 className="py-3 text-3xl font-semibold ">{name}</h2>
       <div className="grid gap-4 lg:grid-cols-2">
         <Image
-        src={ImgUrl}
-          className="shadow-sm shadow-black" 
-          alt={name}
+          src={ImgUrl || '/static/LoadingHD.gif'}
+          className="shadow-sm shadow-black"
+          alt={`Store${id}`}
           width={800}
           height={500}
         ></Image>
@@ -133,19 +150,19 @@ const ID = (InitialProps) => {
             </span>
             <span className="block ">
               <h2 className="my-6 text-xl">{Votes} &#9733;</h2>
-              <button 
-              onClick={()=>{  setVotes(Votes+1)   }}
-                className="block w-max rounded-md border-2 border-white bg-slate-600 p-3 pl-10 pr-10 text-white"
+              <button
+                disabled={IsBtnDisabled}
+                onClick={HandleUpvoteButton}
+                className="block w-max rounded-md border-2 border-white bg-slate-600 p-3 pl-10 pr-10 text-white duration-300 disabled:bg-slate-800 disabled:text-gray-500"
                 href={"/"}
               >
-                Upvote
+                {BtnValue}
               </button>
             </span>
           </div>
         ) : null}
       </div>
-      
-    </div> 
+    </div>
   );
 };
 

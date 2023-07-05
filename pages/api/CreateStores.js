@@ -9,7 +9,6 @@ const CreateStores = async (req, res) => {
 
         if (Record.length !== 0) { 
           res.json(Record);
-          res.end(); 
         } else {
           if (name) {
             const CreateRecord = await table.create([
@@ -38,11 +37,7 @@ const CreateStores = async (req, res) => {
         res.json({ ERROR: "Require ID" });
 
         res.end();
-      }
-
-      res.json({ message: "Post Method says Hello" });
-
-      res.end();
+      } 
     } catch (error) {
       res.status(500);
       res.json({ message: "Error Creating Store store", error });

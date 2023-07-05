@@ -3,7 +3,7 @@ import React from "react";
 
 const UpvoteStores = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.body;
     if (req.method === "PUT") {
       if (id) {
         const records = await FindRecordByFilter(id);
@@ -36,7 +36,7 @@ const UpvoteStores = async (req, res) => {
     }
   } catch (error) {
     res.status(500);
-    res.json(error)
+    res.json({"Upvote Error":error})
     console.error(error);
   }
 };
