@@ -3,8 +3,9 @@ module.exports = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
     // using ./ dir
-    "./app/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}", 
     "./components/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.js", "./components/**/*.js"
   ],
   theme: {
     extend: {
