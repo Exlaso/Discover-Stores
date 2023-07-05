@@ -1,57 +1,53 @@
-import { MinifyRecords, table } from "@/Library/Airtable";
-
-
+import { FindRecordByFilter, MinifyRecords, table } from "@/Library/Airtable";
 
 const CreateStores = async (req, res) => {
   if (req.method === "POST") {
-    try {   
-        const { id,name,address,voting,ImgUrl}= req.body
-        if(id){
-      const FindStoreRecords = await table
-        .select({
-          filterByFormula: `id='${id}'`,
-        })
-        .firstPage();
+    try {
+      const { id, name, address, voting, ImgUrl } = req.body;
+      if (id) {
+        const Record = await FindRecordByFilter(id)
 
-      if (FindStoreRecords.length !== 0) {
-        const record = MinifyRecords(FindStoreRecords)
-        res.json(record);
-      } else { 
+        if (Record.length !== 0) {
+          res.json(MinifyRecords(Record));
+          res.end();
+        } else {
+          if (name) {
+            const CreateRecord = await table.create([
+              {
+                fields: {
+                  id,
+                  name,
+                  address,
+                  voting,
+                  ImgUrl,
+                },
+              },
+            ]);
+            const record = MinifyRecords(CreateRecord);
 
-if (name) {
-    
-  const CreateRecord = await table.create([
-  {
-            fields:{
-                
-                id,
-                name,
-                address,
-                voting,
-                ImgUrl
-            }
+            res.json(record);
+            res.end();
+          } else {
+            res.status(400);
+            res.json({ ERROR: "Require NAME" });
+            res.end();
+          }
         }
-    ])
-    const record = MinifyRecords(CreateRecord)
-    
-    res.json(record)
-}else{
-    res.status(400)
-            res.json({"ERROR":"Require NAME"})
-}
-}
-        }else{
-            res.status(400)
-            res.json({"ERROR":"Require ID"})
-            
-        }
-        
+      } else {
+        res.status(400);
+        res.json({ ERROR: "Require ID" });
+
+        res.end();
+      }
+
       res.json({ message: "Post Method says Hello" });
 
-      
+      res.end();
     } catch (error) {
       res.status(500);
-      res.json({ message: "Error finding store", error });
+      res.json({ message: "Error Creating Store store", error });
+
+      res.end();
     }
   }
 };

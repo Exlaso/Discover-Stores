@@ -44,10 +44,10 @@ const ID = (InitialProps) => {
   
   const id = router.query.id;
   const [coffeeStore, setCoffeeStore] = useState(InitialProps.CofeeStore);
+  const [Votes, setVotes] = useState(0)
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
-  console.log("context stores", coffeeStores);
 
   const HandleCreateStore = async (store) => {
     try {
@@ -58,13 +58,12 @@ const ID = (InitialProps) => {
         body: JSON.stringify({ id, name, address, ImgUrl, voting: 0 }),
       });
       const Store = await Response.json();
-      setCoffeeStore(...Store)
+      console.log(...Store);
     } catch (error) {
       console.error("HandleCreateStore", error);
     }
   };
   useEffect(() => {
-    console.log("effect running");
     if (isEmpty(InitialProps.CofeeStore)) {
       if (coffeeStores.length > 0) {
         const CoffeeStoresFromContext = coffeeStores.find((cs) => {
@@ -74,10 +73,6 @@ const ID = (InitialProps) => {
         HandleCreateStore(CoffeeStoresFromContext);
         setCoffeeStore(CoffeeStoresFromContext);
         }
-      } else {
-        
-        HandleCreateStore({ id });
-        
       }
     } else {
       HandleCreateStore(InitialProps.CofeeStore);
@@ -113,8 +108,9 @@ const ID = (InitialProps) => {
               <p className="inline-block text-xl">{address}</p>
             </span>
             <span className="block ">
-              <h2 className="my-6 text-xl">{0} &#9733;</h2>
+              <h2 className="my-6 text-xl">{Votes} &#9733;</h2>
               <button 
+              onClick={()=>{  setVotes(Votes+1)   }}
                 className="block w-max rounded-md border-2 border-white bg-slate-600 p-3 pl-10 pr-10 text-white"
                 href={"/"}
               >

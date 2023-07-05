@@ -7,10 +7,17 @@ const base = Airtable.base(process.env.AIRTABLE_BASE_KEY);
 
 export const table = base("Coffee Stores");
 
-
 const MinifyRecord = (Record) => {
   return { ...Record.fields };
 };
 export const MinifyRecords = (Records) => {
   return Records.map((record) => MinifyRecord(record));
+};
+
+export const FindRecordByFilter = async (id) => {
+   const findCoffeeStoreRecords = await table
+    .select({ filterByFormula: `id="${id}"` })
+    .firstPage();
+
+  return (MinifyRecords(findCoffeeStoreRecords));
 };
