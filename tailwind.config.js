@@ -1,11 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  mode: 'jit',
   content: [
-    "./src/**/*.{js,ts,jsx,tsx}",
-    // using ./ dir
-    "./app/**/*.{js,ts,jsx,tsx}", 
+    
+    "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
-    "./pages/**/*.js", "./components/**/*.js"
+    "./layouts/**/*.{js,ts,jsx,tsx}",   ],
+    purge: [
+      './pages/**/*.{js,ts,jsx,tsx}', 
+      './components/**/*.{js,ts,jsx,tsx}'
   ],
   theme: {
     extend: {
