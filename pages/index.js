@@ -12,8 +12,8 @@ export const getStaticProps = async () => {
   return { props: { CofeeStore } };
 };
 export default function Home(props) {
-  const [err, setErr] = useState("")
-  const { handleTrackLocation, locationErrorMsg, Isloading } =
+  const [err, setErr] = useState("");
+  const { handleTrackLocation, locationErrorMsg, Isloading,setIsloading } =
     UseTrackLocation();
   const { dispatch, state } = useContext(StoreContext);
   const handleonclickbutton = (e) => {
@@ -22,25 +22,30 @@ export default function Home(props) {
   useEffect(() => {
     async function setCoffeeStoresByLocation() {
       if (state.latLong) {
+        setIsloading(true);
         try {
           const Response = await fetch(
             `/api/GetStoresByLocation?latLong=${state.latLong}&limit=30`
-            );
-            const coffeeStores = await Response.json();
+          );
+
+          const coffeeStores = await Response.json();
           dispatch({
             type: ACTION_TYPES.SET_COFFEE_STORES,
             payload: { coffeeStores },
           });
-          setErr("")
+          setErr("");
+          setIsloading(false);
+
+          
         } catch (err) {
           console.log(err);
-          setErr(err.message)
+          setErr(err.message);
         }
       }
     }
 
     setCoffeeStoresByLocation();
-  }, [state.latLong]);
+  }, [state.latLong, dispatch,setIsloading]);
 
   return (
     <main>

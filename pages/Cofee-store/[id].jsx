@@ -31,23 +31,19 @@ export async function getStaticProps(staticprops) {
   });
   return {
     props: {
-      CofeeStore: findcoffeestorebyid ? findcoffeestorebyid : {},
+      InitialCoffeeStore: findcoffeestorebyid ? findcoffeestorebyid : {},
     },
   };
 }
-const ID = (InitialProps) => {
+const ID = ({InitialCoffeeStore = {}}) => {
   const router = useRouter();
 
-  if (router.isFallback) {
-    return <div className="w-screen absolute inset-0 h-screen flex justify-center items-center ">Loading...</div>;
-  }
-
+  
   const id = router.query.id;
-  const [coffeeStore, setCoffeeStore] = useState(InitialProps.CofeeStore);
+  const [coffeeStore, setCoffeeStore] = useState(InitialCoffeeStore);
   const [Votes, setVotes] = useState(0);
   const [IsBtnDisabled, setIsBtnDisabled] = useState(false);
   const [BtnValue, setBtnValue] = useState("Upvote");
-
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
@@ -65,60 +61,76 @@ const ID = (InitialProps) => {
       console.error("HandleCreateStore", error);
     }
   };
+
+  
   useEffect(() => {
-    if (isEmpty(InitialProps.CofeeStore)) {
+    if (isEmpty(InitialCoffeeStore)) {
       if (coffeeStores.length > 0) {
         const CoffeeStoresFromContext = coffeeStores.find((cs) => {
           return cs.id.toString() === id;
         });
         if (CoffeeStoresFromContext) {
+          
           HandleCreateStore(CoffeeStoresFromContext);
           setCoffeeStore(CoffeeStoresFromContext);
         }
       }
-    } else {
-      HandleCreateStore(InitialProps.CofeeStore);
-    }
-  }, [id, InitialProps.coffeeStore]);
-  const { name, ImgUrl, address } = coffeeStore;
+    }else {
+      HandleCreateStore(InitialCoffeeStore);
+    } 
+  }, [id,InitialCoffeeStore,coffeeStores]);
+
+
 
   const { data, error, isLoading } = useSWR(
     `/api/GetStoresById?id=${id}`,
     fetcher
-  );
-
-  const HandleUpvoteButton = async () => {
-    setIsBtnDisabled(true);
-    setBtnValue("Upvoting...");
-    try {
-      const Response = await fetch("/api/UpvoteStores", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-      const Store = await Response.json();
-      if (Store && Store.length > 0) {
-        setBtnValue("Upvote");
-    setIsBtnDisabled(false);
-    setVotes(Votes + 1);
-      }
-    } catch (error) {            
-      console.error("HandleCreateStore", error);
-    }
-
-
-  };
+    );
 
   useEffect(() => {
     if (data && data.length > 0) {
-
+      
       setCoffeeStore(data[0]);
       setVotes(data[0].voting);
     }
   }, [data]);
+
+  if (router.isFallback) {
+    return <div className="w-screen absolute inset-0 h-screen flex justify-center items-center ">Loading...</div>;
+  }
+
+  
+ 
+  
+
+    
+    const HandleUpvoteButton = async () => {
+      setIsBtnDisabled(true);
+      setBtnValue("Upvoting...");
+      try {
+        const Response = await fetch("/api/UpvoteStores", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id }),
+        });
+        const Store = await Response.json();
+        if (Store && Store.length > 0) {
+          setBtnValue("Upvote");
+          setIsBtnDisabled(false);
+          setVotes(Votes + 1);
+        }
+      } catch (error) {            
+      console.error("HandleCreateStore", error);
+    }
+    
+    
+  };
+  
+  
+  const { name, ImgUrl, address } = coffeeStore;
   if (error) return <div>failed to load</div>;
   if (isLoading) return <div className="w-screen absolute inset-0 h-screen flex justify-center items-center ">Loading...</div>;
-;
+  ;
 
   return (
     <div>

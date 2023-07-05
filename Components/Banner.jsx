@@ -23,6 +23,7 @@ const Banner = ({onclick,Isloading,error}) => {
         <Image
           height={400}
           width={1200} 
+          alt="hero Image"
           src={"/static/hero-image.png"}
           className="ml-auto mr-auto"
         ></Image>
