@@ -3,7 +3,7 @@ import React from "react";
 
 const UpvoteStores = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id, inc } = req.body;
     if (req.method === "PUT") {
       if (id) {
         const records = await FindRecordByFilter(id);
@@ -11,7 +11,11 @@ const UpvoteStores = async (req, res) => {
         if (records.length !== 0) {
           const record = records[0];
 
-          const vote = (parseInt(record.voting) + parseInt(1));
+          const vote =
+            inc === 1
+              ? parseInt(record.voting) + parseInt(1)
+              : parseInt(record.voting) - parseInt(1);
+
           const updaterecord = await table.update([
             {
               id: record.recordId,
@@ -20,9 +24,8 @@ const UpvoteStores = async (req, res) => {
               },
             },
           ]);
-          if(updaterecord){
-
-            res.json(MinifyRecords(updaterecord))
+          if (updaterecord) {
+            res.json(MinifyRecords(updaterecord));
           }
         } else {
           res.json({ "Id Could Not by found": id });
@@ -36,7 +39,7 @@ const UpvoteStores = async (req, res) => {
     }
   } catch (error) {
     res.status(500);
-    res.json({"Upvote Error":error})
+    res.json({ "Upvote Error": error });
     console.error(error);
   }
 };

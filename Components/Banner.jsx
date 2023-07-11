@@ -10,16 +10,16 @@ const Banner = ({onclick,Isloading,error}) => {
         Store <span className="text-blue-900">Connoisseur</span>
       </h1>
       <div className="grid gap-4">
-        <p className="text-2xl text-white ">Mafat ma Gallo Sodhi aapu</p>
+        <p className="text-2xl text-white ">We&apos;ll find Nearby Store for free.</p>
         <button
           onClick={onclick}
-          className="z-10 w-max rounded-md border-2 border-white bg-slate-600 p-3 pl-10 pr-10 text-white "
+          className="z-10 p-3 pl-10 pr-10 text-white border-2 border-white rounded-md w-max bg-slate-600 "
         >
           {Isloading?"Locating...":"Search Store"}
         </button>
         <p>{error}</p>
       </div>
-      <div className="absolute inset-0 -z-10 w-full ">
+      <div className="absolute inset-0 w-full -z-10 ">
         <Image
           height={400}
           width={1200} 

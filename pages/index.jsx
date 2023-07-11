@@ -13,7 +13,7 @@ export const getStaticProps = async () => {
 };
 export default function Home(props) {
   const [err, setErr] = useState("");
-  const { handleTrackLocation, locationErrorMsg, Isloading,setIsloading } =
+  const { handleTrackLocation, locationErrorMsg, Isloading, setIsloading } =
     UseTrackLocation();
   const { dispatch, state } = useContext(StoreContext);
   const handleonclickbutton = (e) => {
@@ -35,8 +35,6 @@ export default function Home(props) {
           });
           setErr("");
           setIsloading(false);
-
-          
         } catch (err) {
           console.log(err);
           setErr(err.message);
@@ -45,12 +43,13 @@ export default function Home(props) {
     }
 
     setCoffeeStoresByLocation();
-  }, [state.latLong, dispatch,setIsloading]);
+  }, [state.latLong, dispatch, setIsloading]);
 
   return (
     <main>
       <Head>
-        <title>Galao</title>
+        <title>Stores Near You</title>
+        <meta name="description" content="We will find the Store near you" />
       </Head>
 
       <Banner
